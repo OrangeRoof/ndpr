@@ -43,14 +43,18 @@ const drawMaskedDerotate = () => {
 	return new Promise(async r => {
 		cutMat()
 		warpMatTmp()
-		resizeMat()
+		//resizeMat()
 		r()
 	})
 }
 
 const drawMat = async () => {
 	return new Promise(async r => {
-		cv.imshow('canvasOut', mat)
+		if (mat_tmp_tmp != undefined) {
+			cv.imshow('canvasOut', mat_tmp_tmp)
+		} else {
+			cv.imshow('canvasOut', mat)
+		}
 		await sleep(1000/30 - (Date.now() - frame_begin))
 		r()
 	})
@@ -97,11 +101,11 @@ const makeBitMask = () => {
 	if (mat_tmp_tmp != undefined) {
 		mat_tmp_tmp.delete(); mat_tmp_tmp = undefined
 	}
-	mat_tmp = new cv.Mat(2*radii+5, 2*radii+5, cv.CV_8UC4, [0, 0, 0, 255])
-	mat_tmp_tmp = new cv.Mat(2*radii+5, 2*radii+5, cv.CV_8UC4, [0, 0, 0, 255])
+	mat_tmp = new cv.Mat(2*radii, 2*radii, cv.CV_8UC4, [0, 0, 0, 255])
+	mat_tmp_tmp = new cv.Mat(2*radii, 2*radii, cv.CV_8UC4, [0, 0, 0, 255])
 
-	mat_dup = cv.Mat.zeros(2*radii+5, 2*radii+5, cv.CV_8U)
-	cv.circle(mat_dup, {x: radii, y: radii}, radii + 5, [255, 255, 255, 255], -1)
+	mat_dup = cv.Mat.zeros(2*radii, 2*radii, cv.CV_8U)
+	cv.circle(mat_dup, {x: radii, y: radii}, radii, [255, 255, 255, 255], -1)
 }
 
 const cutMat = () => {
@@ -109,7 +113,7 @@ const cutMat = () => {
 }
 
 const warpMatTmp = () => {
-	cv.warpAffine(mat_tmp, mat_tmp, rotMats[nth], {width: 2*radii+5, height: 2*radii+5})
+	cv.warpAffine(mat_tmp, mat_tmp, rotMats[nth], {width: 2*radii, height: 2*radii})
 	mat_tmp.copyTo(mat_tmp_tmp, mat_dup)
 }
 
